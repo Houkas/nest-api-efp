@@ -14,10 +14,14 @@ model User{
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  email String
+  email String @unique
   hash String
   firstName String ?
   lastName String ?
+
+  articles Article[]
+  realisations Realisation[]
+
 }
 
 model Article{
@@ -26,6 +30,10 @@ model Article{
   slug String
   meta_description String?
   body Json?
+
+  userID Int
+  user User @relation(fields: [userID], references: [id])
+
 }
 
 model Realisation{
@@ -34,6 +42,9 @@ model Realisation{
   slug String
   meta_description String?
   body Json?
+  userID Int
+  user User @relation(fields: [userID], references: [id])
+
 }
 
 model Partenaire{
