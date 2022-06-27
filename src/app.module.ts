@@ -18,7 +18,7 @@ import { ConfigModule } from '@nestjs/config';
     PrismaModule,
     ConfigModule.forRoot({
       isGlobal: true
-    })
+    }),
   ],
 })
 export class AppModule {}
