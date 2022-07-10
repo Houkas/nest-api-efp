@@ -1,15 +1,50 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, UseFilters, UseGuards } from '@nestjs/common';
+import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 import { ArticleService } from './article.service';
+import { CreateArticleDto, EditArticleDto } from './dto';
+import { HttpExceptionFilter } from './http-exception/http-exception.filter.ts';
 
 @UseGuards(JwtGuard)
-@Controller('article')
+@Controller('articles')
 export class ArticleController {
-    constructor(private articleService: ArticleService){
+
+    constructor(private articleService: ArticleService) {
 
     }
-    @Post('create')
-    createArticle(@Body() slug:string, title:string, body:string){
-        return this.articleService.createArticle(slug, title, body)
+
+    @Get()
+    getArticles(@GetUser('id') userId: number) {
+        return this.articleService.getArticles(userId);
+    }
+
+    @Get(':id')
+    getArticleById(
+        @GetUser('id') userId: number,
+        @Param('id', ParseIntPipe) articleId: number) {
+
+        return this.articleService.getArticleById(userId, articleId);
+
+    }
+
+    @Post()
+    createArticle(@GetUser('id') userId: number, @Body() dto: CreateArticleDto) {
+        return this.articleService.createArticle(userId, dto);
+    }
+
+    @Patch(':id')
+    editArticleById(
+        @GetUser() userId: number,
+        @Param('id', ParseIntPipe) articleId: number,
+        @Body() dto: EditArticleDto) {
+        return this.articleService.editArticleById(userId, articleId, dto);
+    }
+
+    @Delete(':id')
+    deleteArticleById(
+        @GetUser() userId: number,
+        @Param('id', ParseIntPipe) articleId: number
+    ) {
+        return this.articleService.deleteArticleById(userId, articleId)
     }
 }

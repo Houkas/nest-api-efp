@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module'
 import * as pactum from 'pactum';
 import { AuthDto } from '../src/auth/dto';
 import { EditUserDto } from 'src/user/dto';
+import { CreateArticleDto } from 'src/article/dto';
 describe('App e2e', () => {
 
   let app: INestApplication;
@@ -67,7 +68,6 @@ describe('App e2e', () => {
           .post('/auth/signup')
           .withBody(dto)
           .expectStatus(201)
-          .inspect();
       });
     });
 
@@ -115,7 +115,6 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAt}',
           })
           .expectStatus(200)
-          .inspect()
       })
     });
 
@@ -123,6 +122,7 @@ describe('App e2e', () => {
       it('should edit user', () => {
         const dto: EditUserDto = {
           firstName: 'Richard',
+          lastName: 'Hugo',
           email: 'hugor33@outlook.fr'
         }
         return pactum
@@ -135,14 +135,44 @@ describe('App e2e', () => {
           .expectStatus(200)
           .expectBodyContains(dto.firstName)
           .expectBodyContains(dto.email)
-          .inspect()
       })
     });
 
   });
 
   describe('Article', () => {
+    describe('Get empty articles', () => {
+
+      it('Should return articles', () =>{
+        return pactum
+          .spec()
+          .get('/articles')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectBody([])
+          .inspect()
+      })
+
+    });
     describe('Create article', () => {
+
+      it("Should create an article", () => {
+        const dtoCreateArticle: CreateArticleDto = {
+          title: 'title',
+          slug: 'slug',
+          body: 'body'
+        }
+        return pactum
+          .spec()
+          .post('/articles')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dtoCreateArticle)
+          .inspect()
+      })
 
     });
     describe('Get articles', () => {
