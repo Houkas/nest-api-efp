@@ -3,7 +3,6 @@ import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 import { ArticleService } from './article.service';
 import { CreateArticleDto, EditArticleDto } from './dto';
-import { HttpExceptionFilter } from './http-exception/http-exception.filter.ts';
 
 @UseGuards(JwtGuard)
 @Controller('articles')
@@ -34,15 +33,16 @@ export class ArticleController {
 
     @Patch(':id')
     editArticleById(
-        @GetUser() userId: number,
+        @GetUser('id') userId: number,
         @Param('id', ParseIntPipe) articleId: number,
         @Body() dto: EditArticleDto) {
         return this.articleService.editArticleById(userId, articleId, dto);
     }
 
+    @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':id')
     deleteArticleById(
-        @GetUser() userId: number,
+        @GetUser('id') userId: number,
         @Param('id', ParseIntPipe) articleId: number
     ) {
         return this.articleService.deleteArticleById(userId, articleId)

@@ -34,7 +34,7 @@ model Article {
   body             String?
 
   userID Int
-  user   User @relation(fields: [userID], references: [id])
+  users   User @relation(fields: [userID], references: [id])
 
   @@map("articles")
 

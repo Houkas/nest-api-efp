@@ -5,7 +5,7 @@ import { AppModule } from '../src/app.module'
 import * as pactum from 'pactum';
 import { AuthDto } from '../src/auth/dto';
 import { EditUserDto } from 'src/user/dto';
-import { CreateArticleDto } from 'src/article/dto';
+import { CreateArticleDto, EditArticleDto } from 'src/article/dto';
 describe('App e2e', () => {
 
   let app: INestApplication;
@@ -152,7 +152,6 @@ describe('App e2e', () => {
           })
           .expectStatus(200)
           .expectBody([])
-          .inspect()
       })
 
     });
@@ -171,21 +170,82 @@ describe('App e2e', () => {
             Authorization: 'Bearer $S{userAt}',
           })
           .withBody(dtoCreateArticle)
-          .inspect()
+          .stores('articleId', 'id')
       })
 
     });
     describe('Get articles', () => {
 
+      it('Should return articles', () =>{
+        return pactum
+          .spec()
+          .get('/articles')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(1)
+      })
+
     });
     describe('Get article by id', () => {
 
+      it('Should return articles', () =>{
+        return pactum
+          .spec()
+          .get('/articles/{id}')
+          .withPathParams('id', '$S{articleId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectBodyContains('$S{articleId}')
+      })
+
     });
     describe('Edit article by id', () => {
+      const dto: EditArticleDto = {
+        title: 'test'
+      }
+      it('Should edit article', () =>{
+        return pactum
+          .spec()
+          .patch('/articles/{id}')
+          .withPathParams('id', '$S{articleId}')
+          .withBody(dto)
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectBodyContains(dto.title)
+          .expectStatus(200)
+          .inspect()
+      })
 
     });
     describe('Delete article', () => {
 
+      it('Should delete article', () =>{
+        return pactum
+          .spec()
+          .delete('/articles/{id}')
+          .withPathParams('id', '$S{articleId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(204)
+          .inspect()
+      })
+
+      it('Should get empty article', () =>{
+        return pactum
+          .spec()
+          .get('/articles')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(0)
+      })
     });
   });
 
