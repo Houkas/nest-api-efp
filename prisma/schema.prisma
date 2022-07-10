@@ -10,45 +10,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id Int @id @default(autoincrement())
+model User {
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  email String @unique
-  hash String
-  firstName String ?
-  lastName String ?
+  email     String   @unique
+  hash      String
+  firstName String?
+  lastName  String?
 
-  articles Article[]
+  articles     Article[]
   realisations Realisation[]
 
 }
 
-model Article{
-  id Int @id @default(autoincrement())
-  title String
-  slug String
+model Article {
+  id               Int     @id @default(autoincrement())
+  title            String
+  slug             String
   meta_description String?
-  body Json?
+  body             Json?
 
   userID Int
-  user User @relation(fields: [userID], references: [id])
+  user   User @relation(fields: [userID], references: [id])
 
 }
 
-model Realisation{
-  id Int @id @default(autoincrement())
-  title String
-  slug String
+model Realisation {
+  id               Int     @id @default(autoincrement())
+  title            String
+  slug             String
   meta_description String?
-  body Json?
-  userID Int
-  user User @relation(fields: [userID], references: [id])
+  body             Json?
+  userID           Int
+  user             User    @relation(fields: [userID], references: [id])
 
 }
 
-model Partenaire{
-  id Int @id @default(autoincrement())
+model Partenaire {
+  id   Int    @id @default(autoincrement())
   name String
   body Json?
 }
